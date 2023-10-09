@@ -12,7 +12,7 @@ github_repo: "https://github.com/champeil/champeil.github.io.git" # you code rep
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "A husband, A technician, A student, A child"
-sidebar-avatar:       # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/sidebar-head.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
