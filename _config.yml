@@ -1,5 +1,5 @@
 # Site settings
-title: BY Blog
+title: champeil's blog
 SEOTitle: champeil's blog | BY Blog
 header-img: img/post-bg-desk.jpg
 email: laojp@sysucc.org.cn
@@ -25,9 +25,6 @@ github_username:    champeil
 # jianshu_username:   
 # twitter_username:   
 
-
-
-
 # Build settings
 # from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
 permalink: pretty
@@ -35,14 +32,9 @@ paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 
-
-
 # Gems
 # from PR#40, to support local preview for Jekyll 3.0
 gems: [jekyll-paginate]
-
-
-
 
 # Markdown settings
 # replace redcarpet to kramdown,
@@ -52,8 +44,6 @@ markdown: kramdown
 highlighter: rouge
 kramdown:
   input: GFM                            # use Github Flavored Markdown !important
-
-
 
 # 评论系统
 # Disqus（https://disqus.com/）
