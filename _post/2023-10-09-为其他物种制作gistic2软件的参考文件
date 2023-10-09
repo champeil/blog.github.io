@@ -263,7 +263,7 @@ mcc -v -m -w enable -I [absolute_path_to_source]/source gp_gistic2_from_seg
 
 # ps
 - the Chinese version of this tutorial is in my obsidian md file, tell me if you want
-- the related files are uploaded to the play_software/gistic2/
+- the related files are uploaded to the [play_software/gistic2/](https://github.com/champeil/play_software/tree/main/gistic2)
 
 # citation
 If you like my tutorial, please cite:
