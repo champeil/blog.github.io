@@ -1,1 +1,48 @@
+---
+layout:     post
+title:      关于TCGA数据中的MMR信息
+subtitle:   求指正或待查询
+date:       2023-10-10
+author:     champeil
+catalog: true
+tags:
+    - wes
+    - wgs
+    - wxs
+    - TCGA
+    - MMR
+    - MSI
+    - 待解决
+    - 问题与经验
+---
+
+# 前言
+- 最近在做一个课题，需要用到TCGA的数据，用了TCGAbiolink包下载临床数据以后，对其中的400多个结直肠癌病人的临床数据进行TMB的计算，发现了一个小问题
+- 也许是我理解有问题还是说数据注释有错误，或者是检测方法有差异？
+
+# 过程
+## MMR与MSI的临床数据获取
+- MMR： TCGA GDC portal中含有MMR的信息`loss_expression_of_mismatch_repair_proteins_by_ihc`
+- MSI： 结合TCGA GDC portal的`microsatellite_instability`，以及cbioportal中的`MSI_STATUS`（用cbioportalR获取）
+
+## TCGA GDC portal中的MMR与MSI数据联系
+|  MMR\MSI   |  | NO  | YES |
+|  ----  | ----  | ---- | ---- |
+|     |    90    |  31  |  1  |
+| NO  | 297 | 25 | 1 |
+| YES  | 10 | 23 | 7 |
+
+## 整合cbioportal以后MMR与MSI数据联系
+
+|  MMR\MSI   |  | MSI_H  | MSI_L/MSS |
+|  ----  | ----  | ---- | ---- |
+|     |    74    |  5  |  43  |
+| NO  | 117 | 19 | 187 |
+| YES  | 9 | 7 | 24 |
+
+- 可以看到部分样本的MSI结果跟MMR的结果相反，这个现象如果是真的话那就十分有趣了（或者是我想多了）
+
+
+
+
 
