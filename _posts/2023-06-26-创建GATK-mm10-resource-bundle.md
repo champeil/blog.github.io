@@ -34,6 +34,7 @@ tags:
 	- 所以我们只能使用germline当做pon进行过滤
 
 ## bqsr snp and indel source from ncbi and sanger
+
 ```shell
 # download dbsnp vcf file from ncbi, combine and modify the name
 wget --recursive --no-parent --no-directories --accept vcf*vcf.gz ftp://ftp.ncbi.nih.gov/snp/organisms/archive/mouse_10090/VCF/
@@ -56,6 +57,7 @@ java -Xms16G -Xmx16G -cp ${gatk_path}/GenomeAnalysisTK.jar org.broadinstitute.ga
 ```
 
 - mouse indel文件则从Sanger MGP（Sanger Mouse Genetics Programme）下载处理
+
 ```shell
 # download all MGP indels (this file is 5/2015 released)
 wget ftp://ftp-mouse.sanger.ac.uk/REL-1505-SNPs_Indels/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz 
@@ -75,7 +77,6 @@ zcat mgp.v5.merged.indels.dbSNP142.normed.vcf.gz | grep -v "^#" | cut -f 1-8 \
 java -Xms16G -Xmx16G -jar ${PICARD_ROOT}/picard.jar SortVcf VERBOSITY=WARNING \
 	I=mgp.v5.indels.pass.chr.vcf \
 	O=mgp.v5.indels.pass.chr.sort.vcf
-
 ```
 
 ## mouse germline
@@ -85,6 +86,7 @@ java -Xms16G -Xmx16G -jar ${PICARD_ROOT}/picard.jar SortVcf VERBOSITY=WARNING \
 	- sort+index以后使用bcftools concat合并两者文件
 	- sort+index文件
 	- 使用bcftools增加AF，并且使用bgzip+tabix压缩与index文件
+
 ```shell
 wget -c -t 0 https://ftp.ebi.ac.uk/pub/databases/mousegenomes/REL-1505-SNPs_Indels/mgp.v5.merged.snps_all.dbSNP142.vcf.gz
 wget -c -t 0 mgp.v5.merged.indels.dbSNP142.normed.vcf.gz
