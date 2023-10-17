@@ -187,8 +187,9 @@ else
 fi
 
 ```
-#
-
+# 支持一哈
+If you like my tutorial, please cite:
+- [Zhang M, Wen H, Liang M, Qin Y, Zeng Q, Luo D, Zhong X, Li S. Diagnostic Value of Sylvian Fissure Hyperechogenicity in Fetal SAH. AJNR Am J Neuroradiol. 2022 Apr;43(4):627-632. doi: 10.3174/ajnr.A7449. Epub 2022 Mar 10. PMID: 35272984; PMCID: PMC8993207.](https://pubmed.ncbi.nlm.nih.gov/35272984/)
 
 # 参考信息
 \[1]. https://github.com/igordot/genomics/blob/master/workflows/gatk-mouse-mm10.md
