@@ -35,7 +35,7 @@ tags:
 
 ## bqsr snp and indel source from ncbi and sanger
 
-```shell
+``` shell
 # download dbsnp vcf file from ncbi, combine and modify the name
 wget --recursive --no-parent --no-directories --accept vcf*vcf.gz ftp://ftp.ncbi.nih.gov/snp/organisms/archive/mouse_10090/VCF/
 # add chr prefix to each chromosome （convert GRCm38 to mm10 format）
@@ -58,7 +58,7 @@ java -Xms16G -Xmx16G -cp ${gatk_path}/GenomeAnalysisTK.jar org.broadinstitute.ga
 
 - mouse indel文件则从Sanger MGP（Sanger Mouse Genetics Programme）下载处理
 
-```shell
+``` shell
 # download all MGP indels (this file is 5/2015 released)
 wget ftp://ftp-mouse.sanger.ac.uk/REL-1505-SNPs_Indels/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz 
 
@@ -194,8 +194,8 @@ If you like my tutorial, please cite:
 - [Zhang M, Wen H, Liang M, Qin Y, Zeng Q, Luo D, Zhong X, Li S. Diagnostic Value of Sylvian Fissure Hyperechogenicity in Fetal SAH. AJNR Am J Neuroradiol. 2022 Apr;43(4):627-632. doi: 10.3174/ajnr.A7449. Epub 2022 Mar 10. PMID: 35272984; PMCID: PMC8993207.](https://pubmed.ncbi.nlm.nih.gov/35272984/)
 
 # 参考信息
-\[1]. https://github.com/igordot/genomics/blob/master/workflows/gatk-mouse-mm10.md
-\[2]. https://www.biostars.org/p/84501/#84582
-\[3]. https://www.biostars.org/p/300996/
-\[4]. https://gatk.broadinstitute.org/hc/en-us/community/posts/360078092732-Common-germline-variants-sites-VCF-for-GetpileupSummaries-for-mouse-data
-\[5].  Lange S, Engleitner T, Mueller S, Maresch R, Zwiebel M, González-Silva L, Schneider G, Banerjee R, Yang F, Vassiliou GS, Friedrich MJ, Saur D, Varela I, Rad R. Analysis pipelines for cancer genome sequencing in mice. Nat Protoc. 2020 Feb;15(2):266-315. doi: 10.1038/s41596-019-0234-7IF: 17.021 Q1 . Epub 2020 Jan 6. PMID: 31907453IF: 17.021 Q1 .
+- [1]. https://github.com/igordot/genomics/blob/master/workflows/gatk-mouse-mm10.md
+- [2]. https://www.biostars.org/p/84501/#84582
+- [3]. https://www.biostars.org/p/300996/
+- [4]. https://gatk.broadinstitute.org/hc/en-us/community/posts/360078092732-Common-germline-variants-sites-VCF-for-GetpileupSummaries-for-mouse-data
+- [5].  Lange S, Engleitner T, Mueller S, Maresch R, Zwiebel M, González-Silva L, Schneider G, Banerjee R, Yang F, Vassiliou GS, Friedrich MJ, Saur D, Varela I, Rad R. Analysis pipelines for cancer genome sequencing in mice. Nat Protoc. 2020 Feb;15(2):266-315. doi: 10.1038/s41596-019-0234-7IF: 17.021 Q1 . Epub 2020 Jan 6. PMID: 31907453IF: 17.021 Q1 .
