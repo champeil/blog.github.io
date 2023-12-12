@@ -20,6 +20,7 @@ tags:
 - BQSR步骤文件只需要突变位点用于跳过真实的突变
 - getpileupsummaries步骤需要gemline位点并带有allele frequency
 - PON步骤为了消除人工与技术误差以及germline，并且根据gatk教程中，其是通过mutect2对normal构建来的
+- NCBI中dbSNP数据真实但是没有af，sanger测序数据量大，比较可信，有af，各有各优势，综合可以应用到不同的流程中
 
 # 文件
 - bqsr dbsnp：NCBI
