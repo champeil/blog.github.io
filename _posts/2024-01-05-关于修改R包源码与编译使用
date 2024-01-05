@@ -1,0 +1,27 @@
+---
+layout:     post
+title:      关于修改R包源码与编译使用
+date:       2023-01-05
+author:     champeil
+catalog: true
+tags:
+    - R
+    - package
+    - code
+    - source
+---
+# 前言
+- 由于R语言版本不兼容等问题，有的R包需要更新源代码以满足使用者基于该R语言版本的需要
+- 其中一种办法就是修改R包源码，重新编译与安装使用
+
+# 过程
+- 下载R包源码压缩包`tar.gz`结尾的文件，并使用`tar -zxvf [.tar.gz文件]`命令解压
+- 根据R语言运行错误的地方以及提示的源头定位到对应的R代码位置（通常在包中的R文件夹内）
+- 修改代码
+- 创建新的文件夹，并跳转到该文件夹目录下
+- 使用`R CMD build "your_package_dir"`在新文件夹下编译并创建R包
+- 使用`R CMD INSTALL "your_new_package"`安装新编译好的包
+- 不断的重复该过程直到调试成功
+
+# 例子
+- DWD包许久已经没有更新，已经被抛弃掉了，所以需要进行修改[]
