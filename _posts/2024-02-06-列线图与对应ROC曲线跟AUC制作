@@ -15,11 +15,89 @@ tags:
 
 # 过程
 - 对数据进行清洗
-    - 数据填补、缺失值去除等
-- 对每一个变量进行单因素回归分析，并根据p值过滤与因变量有关的自变量
-- 使用LASSO回归分析缩小变量个数
-- 根据最后获得的变量构建多元回归模型、计算ROC曲线值以及AUC跟截断值
-- 绘制列线图、ROC曲线
+    - 缺失值处理
+        - 缺失值去除
+        - 缺失值填补
+    - 如果部分特征的数据相较于其他特征比较大，则考虑针对性scale一下，但是因子数据就不需要了
+    - 将含有唯一值的特征去除
+- 数据按照1:2大小分为测试集与训练集
+- 对训练集进行模型训练
+    - 对每一个变量进行单因素回归分析，并根据p值过滤与因变量有关的自变量
+    - 使用LASSO回归分析缩小变量个数
+    - 根据最后获得的变量构建多元回归模型，并绘制列线图
+- 测试集测试模型性能
+    - 使用测试集输入到模型进行预测，并绘制ROC曲线与获取AUC值
 
 # 代码
+``` r
+# this script is for drawing nomogram and test the performance of the model
+# author: laojp
+# time: 2024.02.06
+# position: SYSUCC bioinformatic platform
+
+
+function(data,n_y){ # n_y: the n_col of y, which is bi-factors, # n_factor: n_col of factors in x
+
+    print("first read and modify the data, split train and test data according to 2:1")
+    data <- read.table("the path of the file",sep="\t",header=TRUE)
+    y_list <- colnames(data)[n_y]
+    data <- data[apply(data,1,function(x){return(all(!is.na(x)))}),apply(data,2,function(x){return(length(unique(x))>1)})]
+    x_list <- colnames(data)[colnames(data)!=y_list]
+    set.seed(100)
+    sample_ext <- sample(c(1:dim(data)[1]),round((dim(data)[1]/3)*2,0),replace = FALSE)
+    train <- data[sample_ext,]
+    test <- data[-sample_ext,]
+
+    print("second filter variants significantlly correlated with y with Generalized Linear Models (p<0.05)")
+    p <- lapply(x_list,function(x){
+        summary(glm(as.formula(paste(y_list," ~ ",x,sep="")),data=data,family=binomial))$coefficients[,4][2]
+      }) %>% unlist()
+    p <- names(p[!is.na(p) & p<0.05])
+
+    print("third is LASSO regression to filter variants based on p")
+    f1 <- glmnet(as.matrix(train[,colnames(train) %in% p]),as.matrix(train[,colnames(train)==y_list]),family = "binomial",nlambda = 100,alpha = 1)
+    plot(f1,xvar="lambda",label=TRUE)
+    cvfit <- cv.glmnet(as.matrix(train[,colnames(train) %in% p]),as.matrix(train[,colnames(train)==y_list]))
+    lasso_res <- coef(cvfit$glmnet.fit,s=cvfit$lambda.min,exact=F) %>%
+        as.numeric() %>%
+        purrr::set_names(rownames(coef(cvfit$glmnet.fit,s=cvfit$lambda.min,exact=F)))
+    lasso_res <- lasso_res[lasso_res!=0]
+    lasso_res <- names(lasso_res[-1])
+
+    print("forth is construct glm model with sig variants")
+    fit2 <- glm(as.formula(paste(y_list,"~",paste(lasso_res,collapse="+"),sep="")),data=train,family=binomial)
+
+    print("fifth is nomogram and roc plot drawing")
+    regplot(fit2,plots=c("density", "boxes"),odds =TRUE)
+    plot(roc(train$col_1_col,fit2$fitted.values),col="red")
+    plot(roc(col_1_col~predict(fit2,test), data = test),print.auc=TRUE,print.thres=TRUE)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
 ```
