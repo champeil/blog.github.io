@@ -65,7 +65,7 @@ function(data,n_y){ # n_y: the n_col of y, which is bi-factors, # n_factor: n_co
     lasso_res <- names(lasso_res[-1])
 
     print("forth is construct glm model with sig variants")
-    fit2 <- glm(as.formula(paste(y_list,"~",paste(lasso_res,collapse="+"),sep="")),data=train,family=binomial)
+    fit2 <- glm(as.formula(paste(y_list,"~",paste(lasso_res,collapse="+"),sep="")),data=train,family=binomial) # coefficient=NA mean Multicollinearity and will not affect the nomogram
 
     print("fifth is nomogram and roc plot drawing")
     regplot(fit2,plots=c("density", "boxes"),odds =TRUE)
