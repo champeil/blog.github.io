@@ -1,0 +1,12 @@
+---
+layout:     post
+title:      列线图与对应ROC曲线跟AUC制作
+date:       2024-02-06
+author:     champeil
+catalog: true
+tags:
+    - nomogram
+    - AUC
+    - ROC
+    - LASSO
+---
