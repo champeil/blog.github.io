@@ -51,6 +51,8 @@ rnaseq %>%
       coord_flip()+
       stat_compare_means(method = "t.test",aes(label=..p.signif..),label.x=1.5,hide.ns = TRUE)
   ) %>% ungroup %>%
+  pull(plots) %>%
+  ggarrange(plotlist = .,common.legend = TRUE)
 
 rnaseq %>%
   dplyr::select(Tumor_Sample_Barcode,external_gene_name,fpkm) %>%
