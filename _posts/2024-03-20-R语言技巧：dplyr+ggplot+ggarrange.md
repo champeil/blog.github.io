@@ -97,4 +97,56 @@ rnaseq %>%
   pull(plots) %>%
   ggarrange(plotlist = .)
 
+list.files("/annotate_peaks/",pattern="*.txt",recursive = FALSE,full.names = TRUE) %>%
+  as.list() %>%
+  purrr::set_names(basename(list.files("/annotate_peaks/",pattern="*.txt",recursive = FALSE)) %>% str_remove_all(pattern="_summit_50_anno.txt")) %>%
+  purrr::imap(function(x,name){
+    return(read.table(x,header=FALSE,sep="\t",skip=1) %>%
+             dplyr::rename(peak=V1,seqnames=V2,start=V3,end=V4,strand=V5,height=V6,annotation=V8,distanceToTSS=V10) %>%
+             dplyr::rename(V4=peak,V5=height) %>%
+             dplyr::select(seqnames,start,end,strand,V4,V5,annotation,distanceToTSS) %>%
+             dplyr::mutate(annotation=case_when(
+               str_detect(annotation,pattern="intron") ~ "Intron",
+               str_detect(annotation,pattern="exon") ~ str_extract(annotation, "exon \\d+ of \\d+"),
+               str_detect(annotation,pattern="promoter-TSS") ~ "Promoter",
+               str_detect(annotation,pattern="Intergenic") ~ "Intergenic",
+               TRUE ~ "TSS"
+             )) %>%
+             tidyr::separate(annotation,sep="( | of )",into = c("type","first","of","second")) %>%
+             dplyr::mutate(annotation=ifelse(is.na(second),type,ifelse(first==1,paste("First",type,sep=" "),ifelse(first==second,paste("Last",type,sep=" "),"Internal exon"))),
+                           sample=name))
+  }) %>% 
+  purrr::reduce(bind_rows) %>%
+  dplyr::group_by(sample) %>%
+  dplyr::mutate(all_num=length(sample)) %>% ungroup() %>%
+  dplyr::group_by(sample,annotation) %>%
+  dplyr::mutate(anno_num=length(sample),
+                freq=anno_num/all_num) %>% ungroup() %>%
+  {
+    df <- .
+    list(
+      plot1=ggplot(data=df,aes(x=sample,y=freq,fill=annotation)) +
+        geom_col(position="fill",width=1)+
+        theme_bw()+
+        theme(panel.grid = element_blank(),
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank(),
+              legend.text = element_text(size=12),
+              legend.title = element_text(size=12)),
+      plot2=ggplot(data=df %>% dplyr::filter(str_detect(annotation,pattern="exon")),
+                   aes(x=sample,y=anno_num,fill=annotation))+
+        geom_col(position = "fill",width = 1)+
+        theme_bw()+
+        theme(panel.grid = element_blank(),
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank(),
+              legend.text = element_text(size=12),
+              legend.title = element_text(size=12))
+    )
+  } %>%
+  ggarrange(plotlist = .,ncol=2,nrow=1,align="hv")
+  
+
 ```
