@@ -15,12 +15,9 @@ tags:
 - 在ASCAT检测CNV的过程中，需要用到alleleCount这么一个软件来计数基因组数据（bam文件等）中等位基因，有两种安装方法：
   - `mamba install cancerit-allelecount`安装的allelecount软件
   - 直接源码编译
-```bash
-
-```
-- 在源码编译alleleCount的过程中其中一步htslib，里面有多种库需要依赖，报错最多的也是htslib配置过程
-  - 在conda环境中如果安装了对应的配置文件，如果直接setup的话，则默认寻找的是自身的配置文件而不是conda环境配置好的文件，所以我们需要调整一下配置文件的位置
-  - 可以直接使用conda安装了htslib以后重定向到htslib对应环境的库
+    - 在源码编译alleleCount的过程中其中一步htslib，里面有多种库需要依赖，报错最多的也是htslib配置过程
+      - 在conda环境中如果安装了对应的配置文件，如果直接setup的话，则默认寻找的是自身的配置文件而不是conda环境配置好的文件，所以我们需要调整一下配置文件的位置
+      - 可以直接使用conda安装了htslib以后重定向到htslib对应环境的库
 
 # 安装过程
 ## alleleCount安装
@@ -39,6 +36,11 @@ vim ./build/opt-build.sh
   --disable-libcurl
 # change the CPPFLAGS and LDFLAGS like this, to re-position the source file
 # libcurl is for connection of the Internet for htslib, which is not used here and cannot installed by conda? so disabled
+
+# 3.5 check the configure
+./install_tmp/htslib/configure # check the configure satisfication
+# or else if you don't want to install htslib, then
+touch ./install_tmp/htslib.success # to cheat the system the htslib is installed 
 
 # 4. install
 ./setup.sh path_to_the_installation
