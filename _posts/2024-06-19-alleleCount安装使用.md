@@ -27,8 +27,10 @@ tags:
 ```bash
 # 1. download alleleCount
 https://github.com/cancerit/alleleCount/releases/tag/v4.2.1
+
 # 2. de-compress and enter the dir
 tar -zxvf v4.2.1.tar.gz
+
 # 3. modify the file of configure and setup
 vim ./build/opt-build.sh
 ./configure --enable-plugins --enable-libcurl --with-libdeflate --prefix=$INST_PATH \
@@ -37,8 +39,13 @@ vim ./build/opt-build.sh
   --disable-libcurl
 # change the CPPFLAGS and LDFLAGS like this, to re-position the source file
 # libcurl is for connection of the Internet for htslib, which is not used here and cannot installed by conda? so disabled
-# 4. configure the finished 
+
+# 4. install
+./setup.sh path_to_the_installation
+
+# 5. configure the finished 
 vim ~/.bashrc
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/software/alleleCount/alleleCount-4.2.1/lib # add the export and save
 source ~/.bashrc
+
 ```
