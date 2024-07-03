@@ -56,10 +56,10 @@ tags:
       - 所以问题就出在了readlength(object)中
   - 关于`readlength(object)`返回read length中，我查看了代码`R/sampleQC.r`，里面使用了`GenomicAlignments`R包读取bam文件，并且将width列的前1000个值的均值用作read长度
       - 背景：我使用STAR进行比对的
-      - 使用这个R包读取发现，里面的width出现17000长度的现象，这个很明显不合理，但是我也发现了cigar中以及njun列中分别是比对情况以及有多少个可变剪接
+      - 使用这个R包读取发现，里面的width出现17000长度的现象，这个很明显不合理，但是我也发现了cigar中以及njun列中分别是比对情况以及有多少个可变剪接，而width是reads在基因组中的覆盖长度
       - 所以意识到，可能是STAR这个软件将可变剪接等事件包含进去导致的width长度拉长，而width指的是比对以后包括中间的可变剪接、插入、缺失等事件的比对情况总长度，所以导致readlength大于预期的reads长度
       - 通过去除可变剪接，或者是直接将readlength设置成50，是跑成功的，进一步验证想法，所以为了兼容STAR的比对情况，需要再想一个办法
-      - 而留意到，qwidth列是将这些事件去除以后，单纯的readlength长度，而这个似乎比较符合我的想法，所以建议是将width转换成qwidth列
+      - 而留意到，qwidth列是将这些事件去除以后，单纯的readlength长度，也就是reads的原始长度，而这个似乎比较符合我的想法，所以建议是将width转换成qwidth列
   - 解决办法
       - `R/sampleQC.r`中的`readlength=round(mean(width(temp[1:tocheckforreads])))`换成`readlength=round(mean(GenomicAlignments::qwidth(temp[1:tocheckforreads])))`即可
       - 然后`R CMD build ./ChIPQC --no-build-vignettes`编译，然后当前文件夹下的包就行了
