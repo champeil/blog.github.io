@@ -62,6 +62,7 @@ tags:
       - 而留意到，qwidth列是将这些事件去除以后，单纯的readlength长度，而这个似乎比较符合我的想法，所以建议是将width转换成qwidth列
   - 解决办法
       - `R/sampleQC.r`中的`readlength=round(mean(width(temp[1:tocheckforreads])))`换成`readlength=round(mean(GenomicAlignments::qwidth(temp[1:tocheckforreads])))`即可
+      - 然后`R CMD build ./ChIPQC --no-build-vignettes`编译，然后当前文件夹下的包就行了
 
 ![image](https://github.com/champeil/champeil.github.io/assets/33405808/63831b79-e2bb-4daa-8245-07d112844391)
 
