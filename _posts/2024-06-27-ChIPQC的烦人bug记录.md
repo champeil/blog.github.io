@@ -143,6 +143,29 @@ tags:
 # 原始代码的input是不会读取到peak列的，就只有bam变量，所以我们需要对samplelist结构进行修饰，也就是control也设置成bam与peak变量
 ```
 
+## 错误三
+- 检测peak的时候，并不是所有染色体都有peak，一旦在指定的染色体中没有检测到peak，则会报错`Error in data.frame(Counts, bedRangesSummitsTemp): arguments imply differing number of rows: 1, 0`，提示bedRangesSummitsTemp也就是peak的数目为0，所以长度对不上
+- 所以需要针对peak进行检查，如果没有peak的话，则返回的是空的GRange对象
+- 代码位置：`ChIPQC/R/sampleQC.R`的302行
+```r
+# raw
+if(!is.null(bedFile)){
+    AvProfile <- colMeans(CoverageMatrix)
+    NormAvProfile <- (AvProfile/FlagTagCounts[4])*1e6
+    elementMetadata(bedRangesTemp) <- data.frame(Counts,bedRangesSummitsTemp)
+
+# change to
+if(!is.null(bedFile)){
+    AvProfile <- colMeans(CoverageMatrix)
+    NormAvProfile <- (AvProfile/FlagTagCounts[4])*1e6
+    if(length(bedRangesSummitsTemp)==0){
+        bedRangesTemp <- GRanges()
+    }else{
+         elementMetadata(bedRangesTemp) <- data.frame(Counts,bedRangesSummitsTemp)
+    }
+
+```
+
 
 
 
