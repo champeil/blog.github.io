@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      ChIPQC的烦人bug记录
-date:       2023-06-27
+date:       2024-06-27
 author:     champeil
 catalog: true
 tags:
@@ -66,8 +66,82 @@ tags:
 
 ![image](https://github.com/champeil/champeil.github.io/assets/33405808/63831b79-e2bb-4daa-8245-07d112844391)
 
+## 错误二
+- 严格来说也不算是错误，只不过是一个适配的东西
+- 在后续的图片绘制过程中，有时候想要将input样本纳入进去查看chip实验的富集效率，但是按照DBA的那种csv的文件读入方法的话，在后面会将input样本给去掉，也就是说如果按照DBA的那种输入的话，input样本是没有peaks信息，也就是无法进行后续的查看的
+- 看代码的时候发现samplelist与controllist进行读取与构建对象以后，samplelist列表中结构是这样的：`samplelist：samplename：bam + peak`以及`samplelist：controlname：bam`，所以在后面成功读入以后发现input那边有很多关于peak富集的参数都是NA值，这就很难搞了
+- 其实关于这个chipqc应该是提供了一个方法解决，就是`taximofen`的那个变量，他是没有control列的，就是将input用做ID里面，当做sample来看了，但是觉得很麻烦
+- 所以尝试改了一下代码，位置在`ChIPQC/R/ChIPQC_IF.R`里面95行开始
 
+```r
+# raw
+#  samplelist = NULL
+#  controlist = NULL
+#  for(i in 1:nrow(meta)) {
+#    newrec = NULL
+#    newrec$peaks = experiment$peaks[[i]]
+#    if(nrow(newrec$peaks)==0) {
+#      newrec$peaks = NULL
+#    }
+#    newrec$bam   = as.character(meta$bamRead[i])
+#    samplelist   = listadd(samplelist,newrec)
+#    if(!is.null(meta$bamControl[i])) {
+#      if(!is.na(meta$bamControl[i])) {
+#        if(meta$bamControl[i]!="") {
+#          savenames = names(controlist) 
+#          controlist = listadd(controlist,as.character(meta$bamControl[i]))
+#          names(controlist) = c(savenames,as.character(meta$Control[i]))
+#        }
+#      }
+#    }
+#  }
+#  controlist = controlist[!duplicated(controlist)]
+#  controls = 0
+#  for(cfile in controlist) {
+#    if (!(cfile %in% as.character(meta$bamRead))) {
+#      newrec = NULL
+#      newrec$bam = cfile
+#      newrec$peaks=NULL
+#      samplelist = listadd(samplelist,newrec)
+#      controls = controls+1
+#    }
+#  }
+#  
+#  names(samplelist) = unique(c(rownames(meta),names(controlist)))
 
+# change to
+  samplelist = NULL
+  controlist = NULL
+  for(i in 1:nrow(meta)) {
+    newrec = NULL
+    newrec$peaks = experiment$peaks[[i]]
+    if(nrow(newrec$peaks)==0) {
+      newrec$peaks = NULL
+    }
+    newrec$bam   = as.character(meta$bamRead[i])
+    savenames_sample = names(samplelist)
+    samplelist   = listadd(samplelist,newrec)
+    names(samplelist) = c(savenames_sample,as.character(meta$ID[i]))
+    if(!is.null(meta$bamControl[i])) {
+      if(!is.na(meta$bamControl[i])) {
+        if(meta$bamControl[i]!="") {
+          newrec_cont = NULL
+          newrec_cont$peaks = experiment$peaks[[i]]
+          if(nrow(newrec_cont$peaks)==0) {
+            newrec_cont$peaks = NULL
+          }
+          newrec_cont$bam   = as.character(meta$bamControl[i])
+          savenames = names(controlist)
+          controlist = listadd(controlist,newrec_cont)
+          names(controlist) = c(savenames,as.character(meta$Control[i]))
+        }   
+      }   
+    }
+  }
+  samplelist <- c(samplelist,controlist)
+
+# 原始代码的input是不会读取到peak列的，就只有bam变量，所以我们需要对samplelist结构进行修饰，也就是control也设置成bam与peak变量
+```
 
 
 
