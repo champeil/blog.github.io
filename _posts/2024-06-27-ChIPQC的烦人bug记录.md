@@ -168,7 +168,14 @@ if(!is.null(bedFile)){
 ## 错误四
 - 使用bioparallel的时候，会出现报错
 - 上网看了一下，这个https://support.bioconductor.org/p/9144941/推荐我重新尝试`BiocParallel::register(BiocParallel::SerialParam())`命令
-    - 这个命令是将并行转换成串行模式下进行
+    - 这个命令是将并行转换成串行模式下进行，这个命令可以串行模式进行，并且不会受到suppressmessage的影响（看`ChIPQC/R/ChIPQC_IF.R`代码的bioparallel部分），可以通过`traceback()`返回具体错误
+    - 尝试1:22之间染色体进行，没问题，只是在XY染色体出现问题了
+    - 并且针对每一个染色体进行尝试，发现单个染色体是没问题的，但是如果多个染色体一起的话，就会发生错误
+    - 单独X或者Y染色体没问题，但是X与Y加在一起，则会返回错误
+- 串行模式下针对X与Y进行分析，报错如下，提示`data.frame(Counts, bedRangesSummitsTemp)`命令中Counts与bedRangesSummitsTemp长度不一样
+    - 用print进行debug发现，当`bedRangesSummits=findCovMaxPos(AllFragRanges,bedRanges,ChrLengths[k],FragmentLength)`中，bedRanges没有发现peak，则会返回空值
+    - 而后续的`bedRangesSummitsTemp <- c(bedRangesSummitsTemp,as.numeric(as.vector(start(bedRangesSummits))))`以后bedRangesSummitsTemp相当于没有添加bedRangesSummits，所以长度跟counts不一样，而count此时等于0，所以长度等于1，bedRangesSummits长度为0
+    - 所以需要判断bedRangesSummits这个GRanges对象是否为空修改，位置：`ChIPQC/R/sampleQC.R`中第242行
 ```r
 Error: BiocParallel errors
   0 remote errors, element index: 
@@ -194,9 +201,34 @@ Error: BiocParallel errors
 1: ChIPQC("/home/laojp/data/liaok/merip/8.R/chipqc/chipqc_summit.csv", 
        annotation = "hg38", chromosomes = paste("chr", c(1:22, "X", 
            "Y"), sep = ""))
+
+
+
+# error with BiocParallel::register(BiocParallel::SerialParam())
+Error: BiocParallel errors
+  1 remote errors, element index: 4
+  0 unevaluated and other errors
+  first remote error:
+Error in data.frame(Counts, bedRangesSummitsTemp): arguments imply differing number of rows: 54, 53
+
+# result
+bedRangesSummitsTemp <- c(bedRangesSummitsTemp,as.numeric(as.vector(start(bedRangesSummits))))
+
+# change to
+if(length(as.numeric(as.vector(start(bedRangesSummits))))==0){
+    message("find coverage is NULL to bedrange, so count=0, set bedrange to 0\n")
+    bedRangesSummitsTemp <- c(bedRangesSummitsTemp,0)
+}else{
+    bedRangesSummitsTemp <- c(bedRangesSummitsTemp,as.numeric(as.vector(start(bedRangesSummits))))
+}
+
+
+
+
 ```
-
-
+# 需要修改的地方
+## DBA构建代码适配DBA输入文件
+- 同样的，ChIPQC如果输入类似于DBA的那种的话，只会针对SampleID列构建DBA object，而不会对control进行，所以需要在`ChIPQC_IF.r`文件进行修改，将DBA处改为针对sample与control都进行DBA对象构建
 
 
 
