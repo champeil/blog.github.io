@@ -165,7 +165,36 @@ if(!is.null(bedFile)){
     }
 
 ```
-
+## 错误四
+- 使用bioparallel的时候，会出现报错
+- 上网看了一下，这个https://support.bioconductor.org/p/9144941/推荐我重新尝试`BiocParallel::register(BiocParallel::SerialParam())`命令
+    - 这个命令是将并行转换成串行模式下进行
+```r
+Error: BiocParallel errors
+  0 remote errors, element index: 
+  190 unevaluated and other errors
+  first remote error:
+> traceback()
+9: stop(.error_bplist(res))
+8: .bpinit(manager = manager, X = X, FUN = FUN, ARGS = ARGS, BPPARAM = BPPARAM, 
+       BPOPTIONS = BPOPTIONS, BPREDO = BPREDO)
+7: bplapply(X, FUN, ..., BPREDO = BPREDO, BPPARAM = BPPARAM, BPOPTIONS = BPOPTIONS)
+6: bplapply(X, FUN, ..., BPREDO = BPREDO, BPPARAM = BPPARAM, BPOPTIONS = BPOPTIONS)
+5: BiocParallel::bplapply(samplelist, doChIPQCsample, experiment, 
+       chromosomes, annotation, mapQCth, blacklist, profileWin, 
+       fragmentLength, shifts)
+4: BiocParallel::bplapply(samplelist, doChIPQCsample, experiment, 
+       chromosomes, annotation, mapQCth, blacklist, profileWin, 
+       fragmentLength, shifts)
+3: withCallingHandlers(expr, message = function(c) if (inherits(c, 
+       classes)) tryInvokeRestart("muffleMessage"))
+2: suppressMessages(BiocParallel::bplapply(samplelist, doChIPQCsample, 
+       experiment, chromosomes, annotation, mapQCth, blacklist, 
+       profileWin, fragmentLength, shifts))
+1: ChIPQC("/home/laojp/data/liaok/merip/8.R/chipqc/chipqc_summit.csv", 
+       annotation = "hg38", chromosomes = paste("chr", c(1:22, "X", 
+           "Y"), sep = ""))
+```
 
 
 
